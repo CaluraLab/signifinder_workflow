@@ -1,0 +1,182 @@
+---
+title: "ST_workflow"
+author: "Stefania"
+output: html_document
+---
+
+# Prepare Data
+We downloaded the spatial transcriptomic dataset “Human Breast Cancer: Ductal Carcinoma In Situ, Invasive Carcinoma (FFPE)”, included in the 10x Genomics Visium Spatial Gene Expression data, from the 10x website (https://www.10xgenomics.com). Annotation of the histology image was performed by an expert anatomopathologist. Then, we imported the spot gene expressions and their annotations in the form of a `SpatialExperiment` using the `read10xVisium` function from the `SpatialExperiment` package (version 1.8.0).
+
+As a first step of this workflow, we load the `SpatialExperiment` object. Then, we normalize the raw counts using the `logNormCounts` function from the `scater` package (version 1.24.0).
+
+```{r}
+load(file = "~/Scrivania/spaziale_anna/Immagini_pannello_spa/workflow/spe_breast.RData")
+
+library(scater)
+spe_breast <- logNormCounts(spe_breast)
+assays(spe_breast) <- assays(spe_breast)[2]
+names(assays(spe_breast)) <- "norm_expr"
+```
+
+# Compute Signatures
+Now we can compute all the signatures for breast and pan-tissue cancers available in `signifinder`.
+
+```{r}
+library(signifinder)
+spe_breast <- multipleSign(
+    dataset = spe_breast, nametype = "ENSEMBL", inputType = "rnaseq", 
+    tissue = c("breast", "pan-tissue"))
+```
+
+# Visualize Scores
+Plot spots annotation.
+
+```{r}
+library(ggspavis)
+plotSpots(
+    spe = spe_breast, annotate = "anno_spots", size = 1.6, 
+    palette = c("#159957", "#FF9F45","#001D6E","#5CB8E4","#1B2430", "#FFD9C0", "#FD5D5D")
+    ) + labs(color = "Spot Annotation")
+```
+
+Generate the color palette.
+
+```{r}
+library(RColorBrewer)
+mypal <- RColorBrewer::brewer.pal(n = 11, name = "Spectral")[c(1:4, 6, 8:11)]
+myPalette <- colorRampPalette(rev(mypal))
+```
+
+Generate the ridge plots and the plots to visualize the spatial score's distributions for the Hypoxia_Buffa, EMT_Cheng, CellCycle_Lundberg, CIN_Carter_70, Tinflam_Ayers, IFN_Ayers, ExpandedImmune_Ayers and Chemokines_Messina signatures.
+
+```{r}
+ridgelineSignPlot(
+    data = spe_breast, groupByAnnot = spe_breast$anno_spots, 
+    selectByAnnot = c("CAF", "necrosis", "stroma", "tumor",
+                      "high-density infiltrated lymphocytes"),
+    whichSign = c("Hypoxia_Buffa", "EMT_Cheng", "CellCycle_Lundberg", "CIN_Carter_70"), 
+    alpha = 0.7)  + 
+    scale_fill_manual(values = c("#001D6E", "#5CB8E4", "#1B2430", "#FFD9C0", "#FD5D5D"), name = "annot")
+
+ridgelineSignPlot(
+    data = spe_breast, groupByAnnot = spe_breast$anno_spots, 
+    selectByAnnot = c("CAF", "necrosis", "stroma", "tumor",
+                      "high-density infiltrated lymphocytes"),
+    whichSign = c("Tinflam_Ayers", "IFN_Ayers", "ExpandedImmune_Ayers", 
+                  "Chemokines_Messina"),
+    alpha = 0.7)  + 
+    scale_fill_manual(values = c("#001D6E", "#5CB8E4", "#1B2430", "#FFD9C0", "#FD5D5D"), name = "annot")
+
+colData(spe_breast)["EMT_Cheng_tumor"] <- spe_breast$EMT_Cheng
+colData(spe_breast)["EMT_Cheng_tumor"][spe_breast$anno_spots != "tumor",] <- NA
+lapply(
+    c("Hypoxia_Buffa", "EMT_Cheng", "EMT_Cheng_tumor", "CellCycle_Lundberg", 
+      "CIN_Carter_70", "Tinflam_Ayers", "IFN_Ayers", "ExpandedImmune_Ayers", 
+      "Chemokines_Messina"), function(x){
+          plotSpots(spe = spe_breast, annotate = x, size = 1) +
+              scale_colour_gradientn(colours = myPalette(100), na.value = "grey90") +
+              theme(legend.position="bottom") + 
+              ggtitle(x) + 
+              labs(color = "score")
+    })
+```
+
+Generate the evaluation plot for all the signatures computed.
+
+```{r}
+evaluationSignPlot(data = spe_breast, nametype = "ENSEMBL")
+```
+
+Generate the plots to visualize the spatial score's distributions for the Tinflam_Ayers, IFN_Ayers, ExpandedImmune_Ayers and Chemokines_Messina signatures for the spots annotated as “high-density infiltrated lymphocytes”, “CAF” and “tumor”.
+
+```{r}
+#Tinflam_Ayers
+colData(spe_breast)["Tinflam_Ayers_caf"] <- spe_breast$Tinflam_Ayers
+colData(spe_breast)["Tinflam_Ayers_caf"][spe_breast$anno_spots!="CAF",] <- NA
+colData(spe_breast)["Tinflam_Ayers_lymphocytes"] <- spe_breast$Tinflam_Ayers
+colData(spe_breast)["Tinflam_Ayers_lymphocytes"][spe_breast$anno_spots!="high-density infiltrated lymphocytes",] <- NA
+colData(spe_breast)["Tinflam_Ayers_tumor"] <- spe_breast$Tinflam_Ayers
+colData(spe_breast)["Tinflam_Ayers_tumor"][spe_breast$anno_spots!="tumor",] <- NA
+
+#IFN_Ayers
+colData(spe_breast)["IFN_Ayers_caf"] <- spe_breast$IFN_Ayers
+colData(spe_breast)["IFN_Ayers_caf"][spe_breast$anno_spots!="CAF",] <- NA
+colData(spe_breast)["IFN_Ayers_lymphocytes"] <- spe_breast$IFN_Ayers
+colData(spe_breast)["IFN_Ayers_lymphocytes"][spe_breast$anno_spots!="high-density infiltrated lymphocytes",] <- NA
+colData(spe_breast)["IFN_Ayers_tumor"] <- spe_breast$IFN_Ayers
+colData(spe_breast)["IFN_Ayers_tumor"][spe_breast$anno_spots!="tumor",] <- NA
+
+#ExpandedImmune_Ayers
+colData(spe_breast)["ExpandedImmune_Ayers_caf"] <- spe_breast$ExpandedImmune_Ayers
+colData(spe_breast)["ExpandedImmune_Ayers_caf"][spe_breast$anno_spots!="CAF",] <- NA
+colData(spe_breast)["ExpandedImmune_Ayers_lymphocytes"] <- spe_breast$ExpandedImmune_Ayers
+colData(spe_breast)["ExpandedImmune_Ayers_lymphocytes"][spe_breast$anno_spots!="high-density infiltrated lymphocytes",] <- NA
+colData(spe_breast)["ExpandedImmune_Ayers_tumor"] <- spe_breast$ExpandedImmune_Ayers
+colData(spe_breast)["ExpandedImmune_Ayers_tumor"][spe_breast$anno_spots!="tumor",] <- NA
+
+#Chemokines_Messina
+colData(spe_breast)["Chemokines_Messina_caf"] <- spe_breast$Chemokines_Messina
+colData(spe_breast)["Chemokines_Messina_caf"][spe_breast$anno_spots!="CAF",] <- NA
+colData(spe_breast)["Chemokines_Messina_lymphocytes"] <- spe_breast$Chemokines_Messina
+colData(spe_breast)["Chemokines_Messina_lymphocytes"][spe_breast$anno_spots!="high-density infiltrated lymphocytes",] <- NA
+colData(spe_breast)["Chemokines_Messina_tumor"] <- spe_breast$Chemokines_Messina
+colData(spe_breast)["Chemokines_Messina_tumor"][spe_breast$anno_spots!="tumor",] <- NA
+
+lapply(
+    c("Tinflam_Ayers", "IFN_Ayers", "ExpandedImmune_Ayers", "Chemokines_Messina"),
+    function(x){
+        list(plotSpots(spe_breast, annotate = paste0(x, "_lymphocytes"), size = 1) +
+            scale_colour_gradientn(
+                colours = myPalette(100), na.value = "grey90",
+                limits = c(min(colData(spe_breast)[,x]), 
+                           max(colData(spe_breast)[,x]))) +
+            theme(legend.key.size = unit(0.4, units = "cm"),
+                  text = element_text(size = 10), 
+                  legend.position="bottom") + 
+            ggtitle(paste0(x, "_lymphocytes")) + 
+            labs(color = "score"), 
+        
+        plotSpots(spe_breast, annotate = paste0(x, "_caf"), size = 1) +
+            scale_colour_gradientn(
+                colours = myPalette(100), na.value = "grey90",
+                limits = c(min(colData(spe_breast)[,x]), 
+                           max(colData(spe_breast)[,x]))) +
+            theme(legend.key.size = unit(0.4, units = "cm"),
+                  text = element_text(size = 10), 
+                  legend.position="bottom") + 
+            ggtitle(paste0(x, "_caf")) + 
+            labs(color = "score"), 
+        
+        plotSpots(spe_breast, annotate = paste0(x, "_tumor"), size = 1) +
+            scale_colour_gradientn(
+                colours = myPalette(100), na.value = "grey90",
+                limits = c(min(colData(spe_breast)[,x]), 
+                           max(colData(spe_breast)[,x]))) +
+            theme(legend.key.size = unit(0.4, units = "cm"),
+                  text = element_text(size = 10), 
+                  legend.position="bottom") + 
+            ggtitle(paste0(x, "_tumor")) + 
+            labs(color = "score"))
+    })
+```
+
+Generate the heatmap of the log2 expression values of genes composing the Tinflam_Ayers, IFN_Ayers, ExpandedImmune_Ayers and Chemokines_Messina signatures.
+
+```{r}
+library(org.Hs.eg.db)
+library(grid)
+symb_spe <- mapIds(
+    org.Hs.eg.db, keys = rownames(spe_breast), 
+    keytype = "ENSEMBL", column = "SYMBOL")
+spe_breast_symbol <- spe_breast[!is.na(symb_spe),]
+rownames(spe_breast_symbol) <- symb_spe[!is.na(symb_spe)]
+spe_breast_symbol <- spe_breast_symbol[!duplicated(rownames(spe_breast_symbol)),]
+geneHeatmapSignPlot(
+    data = spe_breast_symbol, whichSign = c(
+        "Tinflam_Ayers", "IFN_Ayers", "ExpandedImmune_Ayers", "Chemokines_Messina"), 
+    logCount = T, splitBySign = T, sampleAnnot = spe_breast_symbol$anno_spots, 
+    splitBySampleAnnot = T, row_title_gp = gpar(fontsize = 6), 
+    row_names_gp = gpar(fontsize = 6), row_title_rot = 0,
+    column_title_rot = 40, column_title_gp = gpar(fontsize = 6))
+```
+
