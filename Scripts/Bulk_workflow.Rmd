@@ -21,7 +21,7 @@ names(assays(OVse)) <- "norm_expr"
 ```
 
 # Compute Signatures
-We look for signatures useful for OVC investigation. Hence, those signatures specifically developed in OVC or signatures that are available for all cancer types (pan-cancer). Thus, we compute all of them.
+We look for signatures useful for OVC investigation. Hence, those signatures specifically developed in OVC or signatures that are available for all cancer types (pan-cancer).
 
 ```{r}
 library(signifinder)
@@ -30,7 +30,7 @@ OVse <- multipleSign(dataset = OVse, nametype = "SYMBOL", inputType = "rnaseq",
 ```
 
 # Visualize Scores
-We compute the correlation matrix of the signature scores and perform a hierarchical clustering to group similar correlations. For this step we use the `dist` function and the `hclust` function from the `stats` package (version 4.2.2). We then compute the silhouette index to find the best number of clusters and discuss the ones containing the higher correlation values (`NbClust` package, version 3.0.1).
+Figure 2A. We compute the correlation matrix of the signature scores and perform a hierarchical clustering to group similar correlations. For this step we use the `dist` function and the `hclust` function from the `stats` package (version 4.2.2). We then compute the silhouette index to find the best number of clusters and discuss the ones containing the higher correlation values (`NbClust` package, version 3.0.1).
 
 ```{r}
 sign_cor <- correlationSignPlot(OVse)
@@ -56,7 +56,7 @@ group4 <- c("CellCycle_Davoli", "CellCycle_Lundberg", "CIN_Carter_70", "CIN_Cart
             "MitoticIndex_Yang", "DNArep_Kang")
 ```
 
-Generate the heatmap to visualize scores for the signatures inside group 1, 2, 3, and 4.
+Figure 2B. Generate the heatmap to visualize scores for the signatures inside group 1, 2, 3, and 4.
 
 ```{r}
 cons_sign <- c("ConsensusOV_Chen_IMR", "ConsensusOV_Chen_DIF", "ConsensusOV_Chen_PRO", "ConsensusOV_Chen_MES")
@@ -73,7 +73,7 @@ heatmapSignPlot(data = OVse, whichSign = c(group1, group2, group3, group4),
                 splitBySampleAnnot = T, row_split = groups)
 ```
 
-Generate the ridge plots to visualize scores for the signatures inside group 1, 2, 3, and 4.
+Figure 2C. Generate the ridge plots to visualize scores for the signatures inside group 1, 2, 3, and 4.
 
 ```{r}
 ridgelineSignPlot(data = OVse, groupByAnnot = OV_subtype, whichSign = group1)
@@ -82,7 +82,7 @@ ridgelineSignPlot(data = OVse, groupByAnnot = OV_subtype, whichSign = group3)
 ridgelineSignPlot(data = OVse, groupByAnnot = OV_subtype, whichSign = group4)
 ```
 
-Plot survival curves for EMT_Miow_Mesenchymal signature.
+Figure 2D. Plot survival curves for EMT_Miow_Mesenchymal signature.
 
 ```{r}
 OVmaecD <- colData(OVmae)
@@ -101,13 +101,13 @@ survivalSignPlot(data = OVse, survData = mysurvData,
                  whichSign = "EMT_Miow_Mesenchymal", cutpoint = "optimal")
 ```
 
-Generate a scatterplot of scores and a barplot of their density distribution for ASC_Smith signature.
+Figure 2E. Generate a scatterplot of scores and a barplot of their density distribution for ASC_Smith signature.
 
 ```{r}
 oneSignPlot(data = OVse, whichSign = "ASC_Smith", statistics = "quantiles")
 ```
 
-Generate a boxplot of the ASC_Smith signature scores divided by OV subtype.
+Figure 2F. Generate a boxplot of the ASC_Smith signature scores divided by OV subtype.
 
 ```{r}
 box_data <- data.frame(OV_subtype = OV_subtype, score = colData(OVse)[,"ASC_Smith"])
@@ -119,7 +119,7 @@ ggboxplot(box_data, "OV_subtype", "score", fill = "OV_subtype") +
     stat_compare_means(comparisons = my_comparisons, method = "t.test")
 ```
 
-Generate the evaluation plot for all the signatures computed.
+Additional Figure 1. Generate the evaluation plot for all the signatures computed.
 
 ```{r}
 evaluationSignPlot(data = OVse)

@@ -121,7 +121,7 @@ discrete_palette <- c(
     "OPC - Periphery" = "#85D5BC", "OPC - Core" = "#034732")
 ```
 
-Plot the t-SNE colored by cell type and cell location.
+Figure 3A. Plot the t-SNE colored by cell type and cell location.
 
 ```{r}
 plotTSNE(GBsce, colour_by = "cell_loc", point_size = 1.7, point_alpha = 1) + 
@@ -132,7 +132,7 @@ plotTSNE(GBsce, colour_by = "cell_loc", point_size = 1.7, point_alpha = 1) +
           legend.text = element_text(size = 8), legend.title = element_text(size = 8))
 ```
 
-Plot t-SNE colored by scores of Hypoxia_Buffa, CellCycle_Davoli, ECM_Chakravarthy_up and ECM_Chakravarthy_down and the corresponding boxplots.
+Figures 3B, C, D, E. Plot t-SNE colored by scores of Hypoxia_Buffa, CellCycle_Davoli, ECM_Chakravarthy_up and ECM_Chakravarthy_down and the corresponding boxplots.
 
 ```{r}
 lapply(c("Hypoxia_Buffa", "CellCycle_Davoli"), function(i){
@@ -173,7 +173,7 @@ lapply(c("Hypoxia_Buffa", "CellCycle_Davoli", "ECM_Chakravarthy_up",
           legend.position = "none")})
 ```
 
-Plot t-SNE colored by scores of Hypoxia_Buffa, CellCycle_Davoli and VEGF_Hu for the neoplastic cells and the corresponding boxplots.
+Figures 3F, G, H, I. Plot t-SNE colored by scores of Hypoxia_Buffa, CellCycle_Davoli and VEGF_Hu for the neoplastic cells and the corresponding boxplots.
 
 ```{r}
 sign_neo <- c("Hypoxia_Buffa", "VEGF_Hu", "CellCycle_Davoli")
@@ -214,7 +214,7 @@ lapply(sign_neo, function(i){
     stat_compare_means(comparisons = my_comparisons, method = "t.test")})
 ```
 
-Plot t-SNE colored by scores of IPS_Charoentong_CP, IPS_Charoentong_EC, IPS_Charoentong_MHC, IPS_Charoentong_SC, ImmunoScore_Roh and Chemokines_Messina for the immune cells and the corresponding boxplots.
+Figures 3J, K, L, M, N, O, P. Plot t-SNE colored by scores of IPS_Charoentong_CP, IPS_Charoentong_EC, IPS_Charoentong_MHC, IPS_Charoentong_SC, ImmunoScore_Roh and Chemokines_Messina for the immune cells and the corresponding boxplots.
 
 ```{r}
 sign_imm <- c(
@@ -256,7 +256,13 @@ lapply(sign_imm, function(i){
     stat_compare_means(comparisons = my_comparisons, method = "t.test")})
 ```
 
-Generate correlation matrices between signature scores of VEGF_Hu, Hypoxia_Buffa and CellCycle_Davoli computed on the neoplastic cells and between signature scores of Chemokines_Messina, ImmunoScore_Roh and IPS_Charoentong computed on the immune cells.
+Additional Figure 2. Generate the evaluation plot for all the signatures computed.
+
+```{r}
+evaluationSignPlot(GBsce)
+```
+
+Additional Figure 3. Generate correlation matrices between signature scores of VEGF_Hu, Hypoxia_Buffa and CellCycle_Davoli computed on the neoplastic cells and between signature scores of Chemokines_Messina, ImmunoScore_Roh and IPS_Charoentong computed on the immune cells.
 
 ```{r}
 pcor_n <- correlationSignPlot(data = GBsce, whichSign = sign_neo, 
@@ -265,13 +271,7 @@ pcor_i <- correlationSignPlot(data = GBsce, whichSign = sign_imm,
     sampleAnnot = GBsce$cell_type, selectByAnnot = "Immune cell")
 ```
 
-Generate the evaluation plot for all the signatures computed.
-
-```{r}
-evaluationSignPlot(GBsce)
-```
-
-Generate the scatterplot of CellCycle_Davoli scores and CIN_Carter_70 scores computed on the neoplastic cells.
+Additional Figure 4. Generate the scatterplot of CellCycle_Davoli scores and CIN_Carter_70 scores computed on the neoplastic cells.
 
 ```{r}
 ggplot(mapping = aes(x = GBsce$CellCycle_Davoli[GBsce$cell_type=="Neoplastic"], 

@@ -29,7 +29,7 @@ BRCAspe <- multipleSign(
 ```
 
 # Visualize Scores
-Plot spots annotation.
+Figure 4B. Plot spots annotation.
 
 ```{r}
 library(ggspavis)
@@ -47,7 +47,7 @@ mypal <- RColorBrewer::brewer.pal(n = 11, name = "Spectral")[c(1:4, 6, 8:11)]
 myPalette <- colorRampPalette(rev(mypal))
 ```
 
-Generate the ridge plots and the plots to visualize the spatial score's distributions for the Hypoxia_Buffa, EMT_Cheng, CellCycle_Lundberg, CIN_Carter_70, Tinflam_Ayers, IFN_Ayers, ExpandedImmune_Ayers and Chemokines_Messina signatures.
+Figures 4C, I. Generate the ridge plots for the Hypoxia_Buffa, EMT_Cheng, CellCycle_Lundberg, CIN_Carter_70, Tinflam_Ayers, IFN_Ayers, ExpandedImmune_Ayers and Chemokines_Messina signatures.
 
 ```{r}
 ridgelineSignPlot(
@@ -66,7 +66,11 @@ ridgelineSignPlot(
                   "Chemokines_Messina"),
     alpha = 0.7)  + 
     scale_fill_manual(values = c("#001D6E", "#5CB8E4", "#1B2430", "#FFD9C0", "#FD5D5D"), name = "annot")
+```
 
+Figures 4D, E, F, G, H, J, K, L, M. Generate the plots to visualize the spatial score's distributions for the Hypoxia_Buffa, EMT_Cheng, CellCycle_Lundberg, CIN_Carter_70, Tinflam_Ayers, IFN_Ayers, ExpandedImmune_Ayers and Chemokines_Messina signatures.
+
+```{r}
 colData(BRCAspe)["EMT_Cheng_tumor"] <- BRCAspe$EMT_Cheng
 colData(BRCAspe)["EMT_Cheng_tumor"][BRCAspe$anno_spots != "tumor",] <- NA
 lapply(
@@ -81,13 +85,13 @@ lapply(
     })
 ```
 
-Generate the evaluation plot for all the signatures computed.
+Additional Figure 5. Generate the evaluation plot for all the signatures computed.
 
 ```{r}
 evaluationSignPlot(data = BRCAspe, nametype = "ENSEMBL")
 ```
 
-Generate the plots to visualize the spatial score's distributions for the Tinflam_Ayers, IFN_Ayers, ExpandedImmune_Ayers and Chemokines_Messina signatures for the spots annotated as “high-density infiltrated lymphocytes”, “CAF” and “tumor”.
+Additional Figure 6. Generate the plots to visualize the spatial score's distributions for the Tinflam_Ayers, IFN_Ayers, ExpandedImmune_Ayers and Chemokines_Messina signatures for the spots annotated as “high-density infiltrated lymphocytes”, “CAF” and “tumor”.
 
 ```{r}
 #Tinflam_Ayers
@@ -160,7 +164,7 @@ lapply(
     })
 ```
 
-Generate the heatmap of the log2 expression values of genes composing the Tinflam_Ayers, IFN_Ayers, ExpandedImmune_Ayers and Chemokines_Messina signatures.
+Additional Figure 7. Generate the heatmap of the log2 expression values of genes composing the Tinflam_Ayers, IFN_Ayers, ExpandedImmune_Ayers and Chemokines_Messina signatures.
 
 ```{r}
 library(org.Hs.eg.db)
