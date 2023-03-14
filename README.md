@@ -5,11 +5,12 @@ signifinder Workflow: Bulk, Single-cell and Spatial Transcriptomics
 
 This repository contains the scripts for data processing, signature
 computation and figure generation using bulk, single-cell (SC) and
-spatial transcriptomics (ST) RNA-Seq data, reported at XX.
+spatial transcriptomics (ST) RNA-Seq data, reported at
+<https://www.biorxiv.org/content/10.1101/2023.03.07.530940v1>.
 
 <img src=./signifinder_main_figure.png />
 
-A single .Rmd files is provided for each dataset analysis.
+A single .Rmd file is provided for each dataset analysis.
 
 The spatial transcriptomic dataset “Human Breast Cancer: Ductal
 Carcinoma In Situ, Invasive Carcinoma (FFPE)”, from the 10x Genomics
