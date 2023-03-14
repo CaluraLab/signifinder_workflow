@@ -5,7 +5,7 @@ output: html_document
 ---
 
 # Prepare Data
-In this workflow, we present all the analyses, along with the code, to investigate with `signifinder` the single-cell RNA sequencing samples of the glioblastoma dataset of Darmanis et al. (GEO ID: GSE84465, PMID 29091775). We download the dataset using the `TMExplorer` R package (version 1.6.2). The `SingleCellExperiment` object provides the raw count expression values.
+In this workflow, we present all the analyses, along with the code, to investigate with `signifinder` the single-cell RNA sequencing samples of the glioblastoma dataset of Darmanis et al. (GEO ID: GSE84465, GEO ID: GSE84465, Darmanis, S. et al. Single-Cell RNA-Seq Analysis of Infiltrating Neoplastic Cells at the Migrating Front of Human Glioblastoma. Cell Rep 21, 1399–1410 (2017)). We download the dataset using the `TMExplorer` R package (version 1.6.2). The `SingleCellExperiment` object provides the raw count expression values.
 
 ```{r}
 library(TMExplorer)
