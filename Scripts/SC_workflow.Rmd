@@ -75,7 +75,9 @@ out_norm = get_normalized(my_scone, method = rownames(get_params(my_scone))[1])
 Additionally, to reduce the large number of false zeros, we run ALRA on the normalized dataset (PMID: 35017482).
 
 ```{r}
-source("https://raw.githubusercontent.com/KlugerLab/ALRA/master/alra.R")
+# install.packages("devtools")
+# devtools::install_github("KlugerLab/ALRA")
+library(ALRA)
 sample_names <- colnames(out_norm)
 k_choice <- choose_k(t(out_norm))
 result.completed <- alra(t(out_norm), k = k_choice$k)
