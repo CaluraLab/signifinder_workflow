@@ -7,7 +7,7 @@ output: html_document
 # Prepare Data
 We downloaded the spatial transcriptomic dataset “Human Breast Cancer: Ductal Carcinoma In Situ, Invasive Carcinoma (FFPE)”, included in the 10x Genomics Visium Spatial Gene Expression data, from the 10x website (https://www.10xgenomics.com). Annotation of the histology image was performed by an expert anatomopathologist. Then, we imported the spot gene expressions and their annotations in the form of a `SpatialExperiment` using the `read10xVisium` function from the `SpatialExperiment` package (version 1.8.0).
 
-As a first step of this workflow, we load the `SpatialExperiment` object. Then, we normalize the raw counts using the `logNormCounts` function from the `scater` package (version 1.24.0).
+As a first step of this workflow, we load the `SpatialExperiment` object, that is available in the signifinder_workflow/Data directory. Then, we normalize the raw counts using the `logNormCounts` function from the `scater` package (version 1.24.0).
 
 ```{r}
 load(file = "./Data/BRCAspe.RData")
