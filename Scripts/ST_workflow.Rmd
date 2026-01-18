@@ -27,7 +27,7 @@ Now we can compute all the signatures for breast and pan-tissue cancers availabl
 ```{r}
 library(signifinder)
 BRCAspe <- multipleSign(
-    dataset = BRCAspe, nametype = "ENSEMBL", inputType = "rnaseq", 
+    dataset = BRCAspe, nametype = "ENSEMBL", inputType = "rnaseq",
     tissue = c("breast", "pan-tissue"))
 ```
 
@@ -36,8 +36,8 @@ Figure 4B. Plot spots annotation.
 
 ```{r}
 library(ggspavis)
-plotSpots(
-    spe = BRCAspe, annotate = "anno_spots", size = 1.6, 
+plotCoords(
+    spe = BRCAspe, annotate = "anno_spots", point_size = 1.6,
     palette = c("#159957", "#FF9F45","#001D6E","#5CB8E4","#1B2430", "#FFD9C0", "#FD5D5D")
     ) + labs(color = "Spot Annotation")
 ```
@@ -54,20 +54,20 @@ Figures 4C, I. Generate the ridge plots for the Hypoxia_Buffa, EMT_Cheng, CellCy
 
 ```{r}
 ridgelineSignPlot(
-    data = BRCAspe, groupByAnnot = BRCAspe$anno_spots, 
+    data = BRCAspe, groupByAnnot = BRCAspe$anno_spots,
     selectByAnnot = c("CAF", "necrosis", "stroma", "tumor",
                       "high-density infiltrated lymphocytes"),
-    whichSign = c("Hypoxia_Buffa", "EMT_Cheng", "CellCycle_Lundberg", "CIN_Carter_70"), 
-    alpha = 0.7)  + 
+    whichSign = c("Hypoxia_Buffa", "EMT_Cheng", "CellCycle_Lundberg", "CIN_Carter_70"),
+    alpha = 0.7)  +
     scale_fill_manual(values = c("#001D6E", "#5CB8E4", "#1B2430", "#FFD9C0", "#FD5D5D"), name = "annot")
 
 ridgelineSignPlot(
-    data = BRCAspe, groupByAnnot = BRCAspe$anno_spots, 
+    data = BRCAspe, groupByAnnot = BRCAspe$anno_spots,
     selectByAnnot = c("CAF", "necrosis", "stroma", "tumor",
                       "high-density infiltrated lymphocytes"),
-    whichSign = c("Tinflam_Ayers", "IFN_Ayers", "ExpandedImmune_Ayers", 
+    whichSign = c("Tinflam_Ayers", "IFN_Ayers", "ExpandedImmune_Ayers",
                   "Chemokines_Messina"),
-    alpha = 0.7)  + 
+    alpha = 0.7)  +
     scale_fill_manual(values = c("#001D6E", "#5CB8E4", "#1B2430", "#FFD9C0", "#FD5D5D"), name = "annot")
 ```
 
@@ -77,13 +77,13 @@ Figures 4D, E, F, G, H, J, K, L, M. Generate the plots to visualize the spatial 
 colData(BRCAspe)["EMT_Cheng_tumor"] <- BRCAspe$EMT_Cheng
 colData(BRCAspe)["EMT_Cheng_tumor"][BRCAspe$anno_spots != "tumor",] <- NA
 lapply(
-    c("Hypoxia_Buffa", "EMT_Cheng", "EMT_Cheng_tumor", "CellCycle_Lundberg", 
-      "CIN_Carter_70", "Tinflam_Ayers", "IFN_Ayers", "ExpandedImmune_Ayers", 
+    c("Hypoxia_Buffa", "EMT_Cheng", "EMT_Cheng_tumor", "CellCycle_Lundberg",
+      "CIN_Carter_70", "Tinflam_Ayers", "IFN_Ayers", "ExpandedImmune_Ayers",
       "Chemokines_Messina"), function(x){
-          plotSpots(spe = BRCAspe, annotate = x, size = 1) +
+          plotCoords(spe = BRCAspe, annotate = x, point_size = 1) +
               scale_colour_gradientn(colours = myPalette(100), na.value = "grey90") +
-              theme(legend.position="bottom") + 
-              ggtitle(x) + 
+              theme(legend.position="bottom") +
+              ggtitle(x) +
               labs(color = "score")
     })
 ```
@@ -132,37 +132,37 @@ colData(BRCAspe)["Chemokines_Messina_tumor"][BRCAspe$anno_spots!="tumor",] <- NA
 lapply(
     c("Tinflam_Ayers", "IFN_Ayers", "ExpandedImmune_Ayers", "Chemokines_Messina"),
     function(x){
-        list(plotSpots(BRCAspe, annotate = paste0(x, "_lymphocytes"), size = 1) +
+        list(plotCoords(BRCAspe, annotate = paste0(x, "_lymphocytes"), point_size = 1) +
             scale_colour_gradientn(
                 colours = myPalette(100), na.value = "grey90",
-                limits = c(min(colData(BRCAspe)[,x]), 
+                limits = c(min(colData(BRCAspe)[,x]),
                            max(colData(BRCAspe)[,x]))) +
             theme(legend.key.size = unit(0.4, units = "cm"),
-                  text = element_text(size = 10), 
-                  legend.position="bottom") + 
-            ggtitle(paste0(x, "_lymphocytes")) + 
-            labs(color = "score"), 
-        
-        plotSpots(BRCAspe, annotate = paste0(x, "_caf"), size = 1) +
+                  text = element_text(size = 10),
+                  legend.position="bottom") +
+            ggtitle(paste0(x, "_lymphocytes")) +
+            labs(color = "score"),
+
+        plotCoords(BRCAspe, annotate = paste0(x, "_caf"), point_size = 1) +
             scale_colour_gradientn(
                 colours = myPalette(100), na.value = "grey90",
-                limits = c(min(colData(BRCAspe)[,x]), 
+                limits = c(min(colData(BRCAspe)[,x]),
                            max(colData(BRCAspe)[,x]))) +
             theme(legend.key.size = unit(0.4, units = "cm"),
-                  text = element_text(size = 10), 
-                  legend.position="bottom") + 
-            ggtitle(paste0(x, "_caf")) + 
-            labs(color = "score"), 
-        
-        plotSpots(BRCAspe, annotate = paste0(x, "_tumor"), size = 1) +
+                  text = element_text(size = 10),
+                  legend.position="bottom") +
+            ggtitle(paste0(x, "_caf")) +
+            labs(color = "score"),
+
+        plotCoords(BRCAspe, annotate = paste0(x, "_tumor"), point_size = 1) +
             scale_colour_gradientn(
                 colours = myPalette(100), na.value = "grey90",
-                limits = c(min(colData(BRCAspe)[,x]), 
+                limits = c(min(colData(BRCAspe)[,x]),
                            max(colData(BRCAspe)[,x]))) +
             theme(legend.key.size = unit(0.4, units = "cm"),
-                  text = element_text(size = 10), 
-                  legend.position="bottom") + 
-            ggtitle(paste0(x, "_tumor")) + 
+                  text = element_text(size = 10),
+                  legend.position="bottom") +
+            ggtitle(paste0(x, "_tumor")) +
             labs(color = "score"))
     })
 ```
@@ -173,16 +173,16 @@ Additional Figure 7. Generate the heatmap of the log2 expression values of genes
 library(org.Hs.eg.db)
 library(grid)
 symb_spe <- mapIds(
-    org.Hs.eg.db, keys = rownames(BRCAspe), 
+    org.Hs.eg.db, keys = rownames(BRCAspe),
     keytype = "ENSEMBL", column = "SYMBOL")
 BRCAspe_symbol <- BRCAspe[!is.na(symb_spe),]
 rownames(BRCAspe_symbol) <- symb_spe[!is.na(symb_spe)]
 BRCAspe_symbol <- BRCAspe_symbol[!duplicated(rownames(BRCAspe_symbol)),]
 geneHeatmapSignPlot(
     data = BRCAspe_symbol, whichSign = c(
-        "Tinflam_Ayers", "IFN_Ayers", "ExpandedImmune_Ayers", "Chemokines_Messina"), 
-    logCount = T, splitBySign = T, sampleAnnot = BRCAspe_symbol$anno_spots, 
-    splitBySampleAnnot = T, row_title_gp = gpar(fontsize = 6), 
+        "Tinflam_Ayers", "IFN_Ayers", "ExpandedImmune_Ayers", "Chemokines_Messina"),
+    logCount = T, splitBySign = T, sampleAnnot = BRCAspe_symbol$anno_spots,
+    splitBySampleAnnot = T, row_title_gp = gpar(fontsize = 6),
     row_names_gp = gpar(fontsize = 6), row_title_rot = 0,
     column_title_rot = 40, column_title_gp = gpar(fontsize = 6))
 ```
